@@ -11,11 +11,27 @@ the output is:
 Decision Tree: Bias^2: 0.0542, Variance: 0.0458, Accuracy: 0.9186
 Random Forest: Bias^2: 0.0739, Variance: 0.0232, Accuracy: 0.8953
 
+Bias:
+The random forest exhibits slightly higher bias compared to the single decision tree. 
+This is expected because averaging predictions across multiple trees “smoothens” the model,
+making it less flexible and slightly less able to perfectly fit the training data.
+The single decision tree, being more flexible, 
+has lower bias and can fit the training data closely.
+
+
+Variance:
+The variance of the random forest is significantly lower than that of the single tree.
+Single decision trees are sensitive to the specific training data they see, 
+causing their predictions to fluctuate widely if the training set changes. 
+Random forests reduce this instability by averaging over many trees trained on different 
+bootstrap samples, resulting in more consistent predictions.
+
 Bias² = error of average prediction
 bias squared is average of square of all errors basically
 
 Variance = instability across different models
 Variance is mean of all Squared differences between predictions and their mean
+
 """
 
 def estimate_bias_variance(model_class, X_train, y_train, X_test, y_test, n_models=10, **kwargs):
