@@ -52,7 +52,7 @@ class GaussianDigitClassifier:
         self.CovarianceMatrix /= self.total_num_of_samples
         
         if verbose:
-            print(f"Covariance Matrix calculated successfully: {self.CovarianceMatrix}")
+            print(f"Covariance Matrix calculated successfully:\n {self.CovarianceMatrix}")
 
     def regularizeCovariance(self, lamda = 2, verbose = True):
         
@@ -60,7 +60,7 @@ class GaussianDigitClassifier:
             self.CovarianceMatrix[i,i] += lamda
 
         if verbose:
-            print(f"Covariance Matrix after regularization: {self.CovarianceMatrix}")
+            print(f"Covariance Matrix after regularization:\n {self.CovarianceMatrix}")
 
 
 if __name__ == '__main__':
