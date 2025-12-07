@@ -1,11 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-import matplotlib.pyplot as plt
-import numpy as np
-
-import matplotlib.pyplot as plt
-import numpy as np
 
 def plot_two_features(X, y, feat1, feat2):
 
@@ -39,3 +34,4 @@ def plot_two_features(X, y, feat1, feat2):
     plt.grid(True)
     plt.tight_layout()
     plt.show()
+

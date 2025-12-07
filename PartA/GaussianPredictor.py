@@ -93,18 +93,11 @@ class GaussianDigitClassifier:
 
         return ans
 
-
-
-
-class NormalDistribution:
-    def __init__(self, mean, variance):
-        self.mean
-        self.variance
-
-    def getProbability(self, x):
-        1/sqrt(2*pi)
-
-
+    def getMeanMatrix(self):
+        return self.MeanMatrix
+    
+    def getCovarianceMatrix(self):
+        return self.CovarianceMatrix
 
 
 if __name__ == '__main__':
