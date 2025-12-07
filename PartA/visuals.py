@@ -36,6 +36,21 @@ def plot_two_features(X, y, feat1, feat2):
     plt.tight_layout()
     plt.show()
 
+def show_mean_digits_grid(mean_matrix, img_size=(8,8), rows=2, cols=5):
+
+
+    plt.figure(figsize=(10, 4))
+
+    for digit in range(10):
+        plt.subplot(rows, cols, digit + 1)
+        img = mean_matrix[digit].reshape(img_size)
+        plt.imshow(img, cmap='gray')
+        plt.title(f"Digit {digit}")
+        plt.axis('off')
+    
+    plt.tight_layout()
+    plt.show()
+
 def plot_gaussian_accuracies(
     gaussian_classifier : GaussianDigitClassifier,
     X_train, y_train,
