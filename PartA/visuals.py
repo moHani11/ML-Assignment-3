@@ -78,7 +78,7 @@ def plot_gaussian_accuracies(
     train_accuracies = []
     test_accuracies = []
 
-    for lam in lambdas:
+    for i, lam in enumerate(lambdas):
         print(f"At lambda = {lam}\tIteration: {i}")
         gaussian_classifier.regularizeCovariance(lamda=lam, verbose=False)
 
