@@ -14,7 +14,7 @@ class RandomForest:
         self.max_features = max_features
         self.random_state = random_state
 
-        self.trees = []             # list of DecisionTree instances
+        self.trees = []             # list of DecisionTrees
         self.feature_indices = []   # list of arrays: which feature columns each tree saw
         if random_state is not None:
             np.random.seed(random_state)
@@ -36,7 +36,7 @@ class RandomForest:
             else:
                 feat_idxs = np.random.choice(n_features, self.max_features, replace=False)
 
-            # Train a DecisionTree on the reduced feature set (no changes to DecisionTree)
+            # Train a DecisionTree on the reduced feature set
             tree = DecisionTree(max_depth=self.max_depth, min_samples_split=self.min_samples_split)
             tree.fit(X_sample[:, feat_idxs], y_sample)
 
@@ -48,13 +48,12 @@ class RandomForest:
         if not self.trees:
             raise ValueError("The RandomForest instance is not fitted yet.")
 
-        # Collect predictions from each tree (shape: n_trees x n_samples)
         all_preds = []
         for tree, feat_idxs in zip(self.trees, self.feature_indices):
             preds = tree.predict(X[:, feat_idxs])
             all_preds.append(preds)
 
-        all_preds = np.vstack(all_preds)  # shape (n_trees, n_samples)
+        all_preds = np.vstack(all_preds)
 
         # Majority vote per sample
         final_preds = []

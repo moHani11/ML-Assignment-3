@@ -9,7 +9,6 @@ import matplotlib.pyplot as plt
 from torch.ao.quantization.fx.utils import return_arg_list
 
 def entropy(y):
-    """Compute entropy of labels y."""
     if len(y) == 0:
         return 0
     _, counts = np.unique(y, return_counts=True)
@@ -137,17 +136,14 @@ class DecisionTree:
 
 if __name__ == "__main__":
     timer = timeit.default_timer
-    # Load dataset
     data = load_breast_cancer()
     X = data.data
     y = data.target
 
-    # 70% train, 30% temp (val+test)
     X_train, X_temp, y_train, y_temp = train_test_split(
         X, y, test_size=0.30, stratify=y, random_state=42
     )
 
-    # 15% val, 15% test → split temp into half
     X_val, X_test, y_val, y_test = train_test_split(
         X_temp, y_temp, test_size=0.50, stratify=y_temp, random_state=42
     )
@@ -220,8 +216,6 @@ if __name__ == "__main__":
 
     y_pred = final_tree.predict(X_test)
     test_acc = np.mean(y_pred == y_test)
-    # Make predictions
-    # Metrics
     prec = precision_score(y_test, y_pred)
     rec = recall_score(y_test, y_pred)
     f1 = f1_score(y_test, y_pred)
