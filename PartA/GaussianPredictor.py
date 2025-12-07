@@ -1,5 +1,5 @@
 import numpy as np
-import math
+from math import *
 
 class GaussianDigitClassifier:
 
@@ -61,6 +61,50 @@ class GaussianDigitClassifier:
 
         if verbose:
             print(f"Covariance Matrix after regularization:\n {self.CovarianceMatrix}")
+
+    def predict(self, x, verbose = True):
+        
+        prediction = -1
+        maxPosterior = -1000
+        for i, prior in enumerate(self.priors):
+            logPos = self.calculateLogPosterior(x, i, verbose=False)
+            if logPos > maxPosterior:
+                maxPosterior = logPos
+                prediction = i
+        return prediction
+
+
+    def calculateLogPosterior(self, x, c, verbose = True):
+        a = -(self.num_of_features/2) * log1p(2*pi)
+        # print(a)
+        b = -0.5*log1p(np.linalg.det(self.CovarianceMatrix))
+        # print(b)
+        x_sample_minus_mean = x - self.MeanMatrix[c]
+        h_temp = -0.5*np.matmul(x_sample_minus_mean, np.linalg.inv(self.CovarianceMatrix))
+        # print(h.shape)        
+        i = np.dot(h_temp, x_sample_minus_mean)
+        # print(i)
+        j = log1p(self.priors[c])
+
+        ans = a+b+i+j
+        if verbose:
+            print(f"The Log of the posterior log(p(t|x))\
+ is calculated successfully without including the p(x) term:\n {ans}")
+
+        return ans
+
+
+
+
+class NormalDistribution:
+    def __init__(self, mean, variance):
+        self.mean
+        self.variance
+
+    def getProbability(self, x):
+        1/sqrt(2*pi)
+
+
 
 
 if __name__ == '__main__':
