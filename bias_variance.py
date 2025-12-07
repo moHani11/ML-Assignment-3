@@ -53,17 +53,14 @@ def estimate_bias_variance(model_class, X_train, y_train, X_test, y_test, n_mode
 
     all_preds = np.array(all_preds)  # shape = (n_models, n_test_samples)
 
-    # Compute mean prediction per sample
     # For binary labels 0/1, mean is fraction of models predicting 1
     mean_preds = np.mean(all_preds, axis=0)
 
     # Bias^2 = (true - mean_pred)^2
     bias2 = np.mean((y_test - mean_preds) ** 2)
 
-    # Variance = mean of variance across models for each sample
     variance = np.mean(np.var(all_preds, axis=0))
 
-    # Overall accuracy of average model (optional)
     avg_pred_labels = (mean_preds >= 0.5).astype(int)
     acc = np.mean(avg_pred_labels == y_test)
 
