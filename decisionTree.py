@@ -7,6 +7,7 @@ import timeit
 from typing import Optional
 import matplotlib.pyplot as plt
 from torch.ao.quantization.fx.utils import return_arg_list
+
 def entropy(y):
     """Compute entropy of labels y."""
     if len(y) == 0:
@@ -134,7 +135,7 @@ class DecisionTree:
         else:
             return self._predict_one(row, node.right_node)
 
-if __name__ != "__main__":
+if __name__ == "__main__":
     timer = timeit.default_timer
     # Load dataset
     data = load_breast_cancer()
@@ -159,8 +160,9 @@ if __name__ != "__main__":
     max_depth_list = [2, 4, 6, 8, 10]
     min_samples_list = [2, 5, 10]
 
-    best_train_acc = -1
-    val_acc_of_best_train_acc = -1
+    best_val_acc = -1
+    train_acc_of_best_val_acc = -1
+    val_acc = -1
     best_params = None
     train_accs = []
     val_accs = []
@@ -180,16 +182,16 @@ if __name__ != "__main__":
             print(f"depth={depth}, min_split={min_s}, train_acc={train_acc:.4f}, val_acc={val_acc:.4f}")
 
 
-            if train_acc > best_train_acc:
-                best_train_acc = train_acc
-                val_acc_of_best_train_acc = val_acc
+            if val_acc > best_val_acc:
+                best_val_acc = val_acc
+                train_acc_of_best_val_acc = train_acc
                 best_params = (depth, min_s)
         end = timer()
-        train_accs.append(best_train_acc)
-        val_accs.append(val_acc_of_best_train_acc)
+        train_accs.append(train_acc_of_best_val_acc)
+        val_accs.append(val_acc)
         train_times.append(end - start)
 
-    print(f"Best depth: {best_params[0]}, Best Minimum split: {best_params[1]}, Best Train ACC: {best_train_acc}")
+    print(f"Best depth: {best_params[0]}, Best Minimum split: {best_params[1]}, Best Val ACC: {best_val_acc:.4f}, Best Train ACC: {train_acc_of_best_val_acc:.4f}")
 
     best_depth, best_min_samples = best_params
 
