@@ -10,6 +10,7 @@ class GaussianDigitClassifier:
         
         self.MeanMatrix = np.zeros((num_of_classes, num_of_features))
         self.CovarianceMatrix = np.zeros((num_of_features, num_of_features))
+        self.CovarianceMatrixRegularized = self.CovarianceMatrix.copy()
         self.priors = np.zeros(num_of_classes)
         self.total_num_of_samples = 0
 
@@ -56,14 +57,30 @@ class GaussianDigitClassifier:
 
     def regularizeCovariance(self, lamda = 2, verbose = True):
         
+        self.CovarianceMatrixRegularized = self.CovarianceMatrix.copy()
         for i in range(self.num_of_features):
-            self.CovarianceMatrix[i,i] += lamda
+            self.CovarianceMatrixRegularized[i,i] += lamda
 
         if verbose:
-            print(f"Covariance Matrix after regularization:\n {self.CovarianceMatrix}")
+            print(f"Covariance Matrix after regularization:\n {self.CovarianceMatrixRegularized}")
 
-    def predict(self, x, verbose = True):
+    def predict(self, X, verbose = True):
         
+        y_predicted = np.zeros(len(X))
+
+        j = 1
+        # print(y_predicted.shape)
+        for i, sample in enumerate(X):
+            y_predicted[i] = self.predictSample(sample)
+            
+            if verbose and (j%100 == 0):
+                print(f"{i+1} samples done")
+            j+=1
+
+        return y_predicted
+    
+    def predictSample(self, x):
+                
         prediction = -1
         maxPosterior = -1000
         for i, prior in enumerate(self.priors):
@@ -77,10 +94,10 @@ class GaussianDigitClassifier:
     def calculateLogPosterior(self, x, c, verbose = True):
         a = -(self.num_of_features/2) * log1p(2*pi)
         # print(a)
-        b = -0.5*log1p(np.linalg.det(self.CovarianceMatrix))
+        b = -0.5*log1p(np.linalg.det(self.CovarianceMatrixRegularized))
         # print(b)
         x_sample_minus_mean = x - self.MeanMatrix[c]
-        h_temp = -0.5*np.matmul(x_sample_minus_mean, np.linalg.inv(self.CovarianceMatrix))
+        h_temp = -0.5*np.matmul(x_sample_minus_mean, np.linalg.inv(self.CovarianceMatrixRegularized))
         # print(h.shape)        
         i = np.dot(h_temp, x_sample_minus_mean)
         # print(i)
@@ -98,6 +115,9 @@ class GaussianDigitClassifier:
     
     def getCovarianceMatrix(self):
         return self.CovarianceMatrix
+    
+    def getRegularizedCovariancMatrix(self):
+        return self.CovarianceMatrixRegularized
 
 
 if __name__ == '__main__':
