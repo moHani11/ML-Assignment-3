@@ -36,9 +36,6 @@ def plot_two_features(X, y, feat1, feat2):
     plt.tight_layout()
     plt.show()
 
-import numpy as np
-import matplotlib.pyplot as plt
-
 def plot_gaussian_accuracies(
     gaussian_classifier : GaussianDigitClassifier,
     X_train, y_train,
