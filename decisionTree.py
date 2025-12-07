@@ -164,32 +164,47 @@ if __name__ == "__main__":
     train_acc_of_best_val_acc = -1
     val_acc = -1
     best_params = None
-    train_accs = []
-    val_accs = []
-    train_times = []
-    for depth in max_depth_list:
-        start = timer()
-
-        for min_s in min_samples_list:
+    for min_s in min_samples_list:
+        train_accs = []
+        val_accs = []
+        train_times = []
+        for depth in max_depth_list:
+            start = timer()
             tree = DecisionTree(max_depth=depth, min_samples_split=min_s)
             tree.fit(X_train, y_train)
-
             train_preds = tree.predict(X_train)
             val_preds = tree.predict(X_val)
+            end = timer()
             train_acc = np.mean(train_preds == y_train)
             val_acc = np.mean(val_preds == y_val)
-
             print(f"depth={depth}, min_split={min_s}, train_acc={train_acc:.4f}, val_acc={val_acc:.4f}")
-
-
             if val_acc > best_val_acc:
                 best_val_acc = val_acc
                 train_acc_of_best_val_acc = train_acc
                 best_params = (depth, min_s)
-        end = timer()
-        train_accs.append(train_acc_of_best_val_acc)
-        val_accs.append(val_acc)
-        train_times.append(end - start)
+            train_accs.append(train_acc_of_best_val_acc)
+            val_accs.append(val_acc)
+            train_times.append(end - start)
+        # Accuracy vs Depth
+        plt.figure()
+        plt.plot(max_depth_list, train_accs, marker='o')
+        plt.plot(max_depth_list, val_accs, marker='o')
+        plt.xlabel("Tree Depth")
+        plt.ylabel("Accuracy")
+        plt.title(f"Overfitting Analysis: Train vs Validation Accuracy Min_Sample_Size={min_s}")
+        plt.legend(["Training Accuracy", "Validation Accuracy"])
+        plt.grid(True)
+        plt.show(block=False)
+        plt.pause(0.1)  # short pause to render the figure
+        # Time vs Depth
+        plt.figure()
+        plt.plot(max_depth_list, train_times)
+        plt.xlabel("Tree Depth")
+        plt.ylabel("Training Time (seconds)")
+        plt.title(f"Tree Depth vs Training Time Min_Sample_Size={min_s}")
+        plt.show(block=False)
+        plt.pause(0.1)  # short pause to render the figure
+
 
     print(f"Best depth: {best_params[0]}, Best Minimum split: {best_params[1]}, Best Val ACC: {best_val_acc:.4f}, Best Train ACC: {train_acc_of_best_val_acc:.4f}")
 
@@ -222,22 +237,5 @@ if __name__ == "__main__":
     for f, score in sorted_features:
         print(f, score)
 
-    # Accuracy vs Depth
-    plt.figure()
-    plt.plot(max_depth_list, train_accs, marker='o')
-    plt.plot(max_depth_list, val_accs, marker='o')
-    plt.xlabel("Tree Depth")
-    plt.ylabel("Accuracy")
-    plt.title("Overfitting Analysis: Train vs Validation Accuracy")
-    plt.legend(["Training Accuracy", "Validation Accuracy"])
-    plt.grid(True)
-    plt.show()
+    input("Press enter to Exit")
 
-
-    # Time vs Depth
-    plt.figure()
-    plt.plot(max_depth_list, train_times)
-    plt.xlabel("Tree Depth")
-    plt.ylabel("Training Time (seconds)")
-    plt.title("Tree Depth vs Training Time")
-    plt.show()
