@@ -32,7 +32,7 @@ class DecisionTree:
         self.max_depth = max_depth
         self.min_samples_split = min_samples_split
         self.root = None   # will hold the root node after fit()
-        self.feature_importance = defaultdict(float)
+        self.feature_importance = defaultdict(float)    # saves the IG
 
     def fit(self, X, y):
         #start building the tree
