@@ -6,6 +6,7 @@ class CustomNaiveBayes:
         self.classes = None
         self.priors = {}
         self.likelihoods = {}
+        self.unseen_log_probs = {} # To store log prob for unseen feature values
         self.feature_counts = [] # stores number of unique values per feature
 
     def fit(self, x, y):
@@ -20,8 +21,9 @@ class CustomNaiveBayes:
             
             
             self.likelihoods[c] = []
+            self.unseen_log_probs[c] = []
             x_c = x[y == c]
-            # calculating likelihoods P(x_  i | c_k)
+            # calculating likelihoods P(x_ i | c_k)
             for feature in range(num_features):
                 # calculate the values for "feature"
                 num_feature_values = len(np.unique(x[:, feature]))
@@ -40,6 +42,11 @@ class CustomNaiveBayes:
                 
                 self.likelihoods[c].append(np.log(prob))
                 # logs are used for stability
+
+
+                # Calculate and store the log probability for an unseen feature value
+                unseen_prob = self.alpha / (num_samples_in_class + (self.alpha * num_feature_values))
+                self.unseen_log_probs[c].append(np.log(unseen_prob))
 
     
     def calculate_log_probabilities(self, x):
@@ -60,9 +67,24 @@ class CustomNaiveBayes:
 
                 # for handling new feature categories
                 max_val = len(self.likelihoods[c][feature_index]) - 1
-                sample_feature_values = np.clip(sample_feature_values, 0, max_val)
                 
-                class_likelihood += self.likelihoods[c][feature_index][sample_feature_values]
+                # Create an array for the likelihoods of the samples' feature values
+                feature_likelihoods = np.zeros(n_samples)
+
+                # Identify seen and unseen feature values
+                unseen_mask = sample_feature_values > max_val
+                seen_mask = ~unseen_mask
+
+                # Get likelihoods for seen values
+                if np.any(seen_mask):
+                    seen_values = sample_feature_values[seen_mask]
+                    feature_likelihoods[seen_mask] = self.likelihoods[c][feature_index][seen_values]
+
+                # Get likelihoods for unseen values
+                if np.any(unseen_mask):
+                    feature_likelihoods[unseen_mask] = self.unseen_log_probs[c][feature_index]
+
+                class_likelihood += feature_likelihoods
             
             log_probs[:, idx] = prior + class_likelihood
             
